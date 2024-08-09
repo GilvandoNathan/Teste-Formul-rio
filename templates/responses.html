@@ -2,54 +2,71 @@
 <html>
 <head>
     <title>Respostas</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            border-spacing: 10px;
+            table-layout: auto; /* Ajuste automático das colunas */
+            display: flex;
+        }
+
+        th.cabeçalho {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+            white-space: wrap; /* Quebra de linha */
+            overflow: hidden;
+            text-overflow: ellipsis; /* Adiciona "..." caso o texto seja muito longo */
+            flex: auto;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+            white-space: wrap; /* Para quebrar de linha */
+            overflow: hidden;
+            text-overflow: ellipsis; /* Adiciona "..." caso o texto seja muito longo */
+            flex: auto;
+            width: 10px;
+        }
+    </style>
 </head>
 <body>
     <h2>Respostas Submetidas</h2>
-    <table border="1">
+    <table>
         <tr>
-            <th>ID</th>
-            <th>Data</th>
-            <th>Encarregado</th>
-            <th>Turma</th>
-            <th>Turno</th>
-            <th>Profissionais Presentes</th>
-            <th>Técnico de Segurança</th>
-            <th>Tema do DDSIG</th>
-            <th>Atividades de Mecânica</th>
-            <th>Atividades de Elétrica</th>
-            <th>Organização e Limpeza</th>
-            <th>Atividades de Caldeiraria</th>
-            <th>Atividades de Transporte</th>
-            <th>Atividades de Mobilização</th>
-            <th>Atividades de Logística</th>
-            <th>Outras Atividades</th>
-            <th>Pendências</th>
-            <th>Observações</th>
-            <th>Ocorrências de EHS</th>
-            <th>Ausências</th>
+            <th class="cabeçalho">ID</th>
+            <th class="cabeçalho">Data</th>
+            <th class="cabeçalho">Turma</th>
+            <th class="cabeçalho">Pendências</th>
+            <th class="cabeçalho">Tema do DDSIG</th>
+            <th class="cabeçalho">Ocorrências de EHS</th>
+            <th class="cabeçalho">Atividades de Mecânica</th>
+            <th class="cabeçalho">Atividades de Elétrica</th>
+            <th class="cabeçalho">Organização e Limpeza</th>
+            <th class="cabeçalho">Atividades de Caldeiraria</th>
+            <th class="cabeçalho">Atividades de Transporte</th>
+            <th class="cabeçalho">Atividades de Mobilização</th>
+            <th class="cabeçalho">Atividades de Logística</th>
+            <th class="cabeçalho">Outras Atividades</th>
         </tr>
         {% for row in rows %}
         <tr>
-            <td>{{ row.id }}</td>
-            <td>{{ row.data }}</td>
-            <td>{{ row.encarregado }}</td>
-            <td>{{ row.turma }}</td>
-            <td>{{ row.turno }}</td>
-            <td>{{ row.profissionais_presentes }}</td>
-            <td>{{ row.tecnico_seguranca }}</td>
-            <td>{{ row.tema_ddsig }}</td>
-            <td>{{ row.atividades_mecanica }}</td>
-            <td>{{ row.atividades_eletrica }}</td>
-            <td>{{ row.organizacao_limpeza }}</td>
-            <td>{{ row.atividades_caldeiraria }}</td>
-            <td>{{ row.atividades_transporte }}</td>
-            <td>{{ row.atividades_mobilizacao }}</td>
-            <td>{{ row.atividades_logistica }}</td>
-            <td>{{ row.outas_atividades }}</td>
-            <td>{{ row.pendencias }}</td>
-            <td>{{ row.observacoes }}</td>
-            <td>{{ row.ocorrencias_ehs }}</td>
-            <td>{{ row.ausencias }}</td>
+            <td>{{ row[0] }}</td>
+            <td>{{ row[1] }}</td>
+            <td>{{ row[2] }}</td>
+            <td>{{ row[3] }}</td>
+            <td>{{ row[4] }}</td>
+            <td>{{ row[5] }}</td>
+            <td>{{ row[6] }}</td>
+            <td>{{ row[7] }}</td>
+            <td>{{ row[8] }}</td>
+            <td>{{ row[9] }}</td>
+            <td>{{ row[10] }}</td>
+            <td>{{ row[11] }}</td>
+            <td>{{ row[12] }}</td>
+            <td>{{ row[13] }}</td>
         </tr>
         {% endfor %}
     </table>

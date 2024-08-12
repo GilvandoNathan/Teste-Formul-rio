@@ -1,39 +1,14 @@
-from flask import Flask, request, render_template, g
+from flask import Flask, request, render_template, g, send_file
 import sqlite3
 import os
+from io import BytesIO
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
 
 app = Flask(__name__)
 
 # Caminho do banco de dados
 DATABASE = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'database.db')
-def init_db():
-    print("Iniciando o banco de dados...")
-    with app.app_context():
-        db = get_db()
-        cursor = db.cursor()
-        cursor.execute('''CREATE TABLE IF NOT EXISTS respostas (
-                          id INTEGER PRIMARY KEY AUTOINCREMENT,
-                          pasta TEXT,
-                          encarregados TEXT,
-                          turma TEXT,
-                          turno TEXT,
-                          profissionais_presentes TEXT,
-                          tecnico_seguranca TEXT,
-                          tema_ddsig TEXT,
-                          atividades_mecanica TEXT,
-                          atividades_eletrica TEXT,
-                          organizacao_limpeza TEXT,
-                          atividades_caldeiraria TEXT,
-                          atividades_transporte TEXT,
-                          atividades_mobilizacao TEXT,
-                          atividades_logistica TEXT,
-                          outras_atividades TEXT,
-                          pendencias TEXT,
-                          observacoes TEXT,
-                          ocorrencias_ehs TEXT,
-                          ausencias TEXT)''')
-        db.commit()
-    print("Banco de dados inicializado.")
 
 def get_db():
     db = getattr(g, '_database', None)
@@ -51,11 +26,25 @@ def init_db():
     with app.app_context():
         db = get_db()
         cursor = db.cursor()
-        cursor.execute('''CREATE TABLE IF NOT EXISTS responses
-                          (id INTEGER PRIMARY KEY, date TEXT, supervisor TEXT, team TEXT, shift TEXT, professionals TEXT,
-                           safety_technician TEXT, ddsig_theme TEXT, mechanical_activities TEXT, electrical_activities TEXT,
-                           cleaning TEXT, boilermaking_activities TEXT, transport_activities TEXT, mobilization_activities TEXT,
-                           logistics_activities TEXT, other_activities TEXT, pending_issues TEXT, observations TEXT, ehs_occurences TEXT, absences TEXT)''')
+        cursor.execute('''CREATE TABLE IF NOT EXISTS respostas (
+                          id INTEGER PRIMARY KEY AUTOINCREMENT,
+                          pasta TEXT,
+                          encarregados TEXT,
+                          profissionais_presentes TEXT,
+                          turma TEXT,
+                          turno TEXT,
+                          tema_ddsig TEXT,
+                          atividades_mecanica TEXT,
+                          atividades_eletrica TEXT,
+                          organizacao_limpeza TEXT,
+                          atividades_caldeiraria TEXT,
+                          atividades_transporte TEXT,
+                          atividades_mobilizacao TEXT,
+                          atividades_logistica TEXT,
+                          outras_atividades TEXT,
+                          pendencias TEXT,
+                          ocorrencias_ehs TEXT,
+                          ausencias TEXT)''')
         db.commit()
 
 @app.route('/')
@@ -64,47 +53,103 @@ def index():
 
 @app.route('/submit', methods=['POST'])
 def submit():
-    date = request.form['pasta']
-    supervisor = request.form['encarregados']
-    team = request.form['turma']
-    shift = request.form['turno']
-    professionals = ','.join(request.form.getlist('edidelson'))
-    safety_technician = request.form['ts']
-    ddsig_theme = request.form['tdd']
-    mechanical_activities = request.form['ame']
-    electrical_activities = request.form['ele']
-    cleaning = request.form['oli']
-    boilermaking_activities = request.form['aca']
-    transport_activities = request.form['atr']
-    mobilization_activities = request.form['amo']
-    logistics_activities = request.form['alo']
-    other_activities = request.form['oat']
-    pending_issues = request.form['pen']
-    observations = request.form['obs']
-    ehs_occurences = request.form['oco']
-    absences = request.form['aus']
+    pasta = request.form['pasta']
+    encarregados = request.form['encarregados']
+    profissionais_presentes = request.form.get('profissionais_presentes', '')
+    turma = request.form['turma']
+    turno = request.form['turno']
+    tema_ddsig = request.form['tema_ddsig']
+    atividades_mecanica = request.form['atividades_mecanica']
+    atividades_eletrica = request.form['atividades_eletrica']
+    organizacao_limpeza = request.form['organizacao_limpeza']
+    atividades_caldeiraria = request.form['atividades_caldeiraria']
+    atividades_transporte = request.form['atividades_transporte']
+    atividades_mobilizacao = request.form['atividades_mobilizacao']
+    atividades_logistica = request.form['atividades_logistica']
+    outras_atividades = request.form['outras_atividades']
+    pendencias = request.form['pendencias']
+    ocorrencias_ehs = request.form['ocorrencias_ehs']
+    ausencias = request.form['ausencias']
 
     db = get_db()
     cursor = db.cursor()
-    cursor.execute('''INSERT INTO responses (date, supervisor, team, shift, professionals, safety_technician, ddsig_theme, 
-                    mechanical_activities, electrical_activities, cleaning, boilermaking_activities, transport_activities, 
-                    mobilization_activities, logistics_activities, other_activities, pending_issues, observations, 
-                    ehs_occurences, absences) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
-                   (date, supervisor, team, shift, professionals, safety_technician, ddsig_theme, mechanical_activities, 
-                    electrical_activities, cleaning, boilermaking_activities, transport_activities, mobilization_activities, 
-                    logistics_activities, other_activities, pending_issues, observations, ehs_occurences, absences))
+    cursor.execute('''INSERT INTO respostas 
+                      (pasta, encarregados, profissionais_presentes, turma, turno, tema_ddsig, atividades_mecanica, atividades_eletrica, 
+                      organizacao_limpeza, atividades_caldeiraria, atividades_transporte, atividades_mobilizacao, atividades_logistica, 
+                      outras_atividades, pendencias, ocorrencias_ehs, ausencias) 
+                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+                   (pasta, encarregados, profissionais_presentes, turma, turno, tema_ddsig, atividades_mecanica, atividades_eletrica, 
+                    organizacao_limpeza, atividades_caldeiraria, atividades_transporte, atividades_mobilizacao, atividades_logistica, 
+                    outras_atividades, pendencias, ocorrencias_ehs, ausencias))
     db.commit()
 
     return 'Resposta recebida!'
 
-@app.route('/responses')
+@app.route('/responses', methods=['GET'])
 def responses():
+    encarregado_filter = request.args.get('encarregado', 'Todos')
+
     db = get_db()
     cursor = db.cursor()
-    cursor.execute("SELECT * FROM responses")
+
+    if encarregado_filter == 'Todos':
+        cursor.execute("SELECT * FROM respostas")
+    else:
+        cursor.execute("SELECT * FROM respostas WHERE encarregados = ?", (encarregado_filter,))
+    
     rows = cursor.fetchall()
 
-    return render_template('responses.html', rows=rows)
+    return render_template('responses.html', rows=rows, selected_encarregado=encarregado_filter)
+
+@app.route('/generate_pdf', methods=['GET'])
+def generate_pdf():
+    record_id = request.args.get('id')
+    if not record_id:
+        return 'ID do relatório não fornecido', 400
+
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM respostas WHERE id = ?", (record_id,))
+    row = cursor.fetchone()
+
+    if not row:
+        return 'Relatório não encontrado', 404
+
+    output = BytesIO()
+    c = canvas.Canvas(output, pagesize=letter)
+    width, height = letter
+
+    # Dados do relatório
+    text = [
+        f"ID: {row[0]}",
+        f"Pasta: {row[1]}",
+        f"Encarregados: {row[2]}",
+        f"Profissionais Presentes: {row[3]}",
+        f"Turma: {row[4]}",
+        f"Turno: {row[5]}",
+        f"Tema do DDSIG: {row[6]}",
+        f"Atividades de Mecânica: {row[7]}",
+        f"Atividades de Elétrica: {row[8]}",
+        f"Organização e Limpeza: {row[9]}",
+        f"Atividades de Caldeiraria: {row[10]}",
+        f"Atividades de Transporte: {row[11]}",
+        f"Atividades de Mobilização: {row[12]}",
+        f"Atividades de Logística: {row[13]}",
+        f"Outras Atividades: {row[14]}",
+        f"Pendências: {row[15]}",
+        f"Ocorrências de EHS: {row[16]}",
+        f"Ausências: {row[17]}",
+    ]
+
+    y = height - 40
+    for line in text:
+        c.drawString(40, y, line)
+        y -= 20
+
+    c.save()
+    output.seek(0)
+    
+    return send_file(output, as_attachment=True, download_name='relatorio.pdf', mimetype='application/pdf')
 
 if __name__ == '__main__':
     init_db()

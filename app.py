@@ -8,7 +8,7 @@ from reportlab.pdfgen import canvas
 app = Flask(__name__)
 
 # Caminho do banco de dados
-DATABASE = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'database.db')
+DATABASE = os.path.join(os.path.abspath(os.path.dirname(__file__)), '_database.db')
 
 def get_db():
     db = getattr(g, '_database', None)

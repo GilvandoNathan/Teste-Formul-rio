@@ -21,14 +21,13 @@ def close_connection(exception):
     db = getattr(g, '_database', None)
     if db is not None:
         db.close()
-
 def init_db():
     with app.app_context():
         db = get_db()
         cursor = db.cursor()
         cursor.execute('''CREATE TABLE IF NOT EXISTS respostas (
                           id INTEGER PRIMARY KEY AUTOINCREMENT,
-                          pasta TEXT,
+                          data TEXT,
                           encarregados TEXT,
                           profissionais_presentes TEXT,
                           turma TEXT,
@@ -46,39 +45,39 @@ def init_db():
                           ocorrencias_ehs TEXT,
                           ausencias TEXT)''')
         db.commit()
-
+        
 @app.route('/')
 def index():
     return render_template('form.html')
 
 @app.route('/submit', methods=['POST'])
 def submit():
-    pasta = request.form['pasta']
-    encarregados = request.form['encarregados']
+    data = request.form.get('data', '')  # Adicionando valor padrão
+    encarregados = request.form.get('encarregados', '')  # Adicionando valor padrão
     profissionais_presentes = request.form.get('profissionais_presentes', '')
-    turma = request.form['turma']
-    turno = request.form['turno']
-    tema_ddsig = request.form['tema_ddsig']
-    atividades_mecanica = request.form['atividades_mecanica']
-    atividades_eletrica = request.form['atividades_eletrica']
-    organizacao_limpeza = request.form['organizacao_limpeza']
-    atividades_caldeiraria = request.form['atividades_caldeiraria']
-    atividades_transporte = request.form['atividades_transporte']
-    atividades_mobilizacao = request.form['atividades_mobilizacao']
-    atividades_logistica = request.form['atividades_logistica']
-    outras_atividades = request.form['outras_atividades']
-    pendencias = request.form['pendencias']
-    ocorrencias_ehs = request.form['ocorrencias_ehs']
-    ausencias = request.form['ausencias']
+    turma = request.form.get('turma', '')  # Adicionando valor padrão
+    turno = request.form.get('turno', '')  # Adicionando valor padrão
+    tema_ddsig = request.form.get('tema_ddsig', '')
+    atividades_mecanica = request.form.get('atividades_mecanica', '')
+    atividades_eletrica = request.form.get('atividades_eletrica', '')
+    organizacao_limpeza = request.form.get('organizacao_limpeza', '')
+    atividades_caldeiraria = request.form.get('atividades_caldeiraria', '')
+    atividades_transporte = request.form.get('atividades_transporte', '')
+    atividades_mobilizacao = request.form.get('atividades_mobilizacao', '')
+    atividades_logistica = request.form.get('atividades_logistica', '')
+    outras_atividades = request.form.get('outras_atividades', '')
+    pendencias = request.form.get('pendencias', '')
+    ocorrencias_ehs = request.form.get('ocorrencias_ehs', '')
+    ausencias = request.form.get('ausencias', '')
 
     db = get_db()
     cursor = db.cursor()
     cursor.execute('''INSERT INTO respostas 
-                      (pasta, encarregados, profissionais_presentes, turma, turno, tema_ddsig, atividades_mecanica, atividades_eletrica, 
+                      (data, encarregados, profissionais_presentes, turma, turno, tema_ddsig, atividades_mecanica, atividades_eletrica, 
                       organizacao_limpeza, atividades_caldeiraria, atividades_transporte, atividades_mobilizacao, atividades_logistica, 
                       outras_atividades, pendencias, ocorrencias_ehs, ausencias) 
                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
-                   (pasta, encarregados, profissionais_presentes, turma, turno, tema_ddsig, atividades_mecanica, atividades_eletrica, 
+                   (data, encarregados, profissionais_presentes, turma, turno, tema_ddsig, atividades_mecanica, atividades_eletrica, 
                     organizacao_limpeza, atividades_caldeiraria, atividades_transporte, atividades_mobilizacao, atividades_logistica, 
                     outras_atividades, pendencias, ocorrencias_ehs, ausencias))
     db.commit()
@@ -121,8 +120,7 @@ def generate_pdf():
 
     # Dados do relatório
     text = [
-        f"ID: {row[0]}",
-        f"Pasta: {row[1]}",
+        f"Data: {row[1]}",
         f"Encarregados: {row[2]}",
         f"Profissionais Presentes: {row[3]}",
         f"Turma: {row[4]}",

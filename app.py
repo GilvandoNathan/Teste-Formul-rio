@@ -1,9 +1,10 @@
-from flask import Flask, request, render_template, g, send_file
+from flask import Flask, request, render_template, g, send_file, redirect, url_for
 import sqlite3
 import os
 from io import BytesIO
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -21,6 +22,7 @@ def close_connection(exception):
     db = getattr(g, '_database', None)
     if db is not None:
         db.close()
+
 def init_db():
     with app.app_context():
         db = get_db()
@@ -82,7 +84,8 @@ def submit():
                     outras_atividades, pendencias, ocorrencias_ehs, ausencias))
     db.commit()
 
-    return 'Resposta recebida!'
+    # Redireciona para o endpoint /responses após o sucesso do envio
+    return redirect(url_for('responses'))
 
 @app.route('/responses', methods=['GET'])
 def responses():
@@ -120,7 +123,7 @@ def generate_pdf():
 
     # Dados do relatório
     text = [
-        f"data: {row[1]}",
+        f"Data: {row[1]}",
         f"Encarregados: {row[2]}",
         f"Profissionais Presentes: {row[3]}",
         f"Turma: {row[4]}",
@@ -146,8 +149,12 @@ def generate_pdf():
 
     c.save()
     output.seek(0)
-    
-    return send_file(output, as_attachment=True, download_name='relatorio.pdf', mimetype='application/pdf')
+
+    # Gera o nome do arquivo com base na data do dia
+    current_date = datetime.now().strftime('%Y-%m-%d')
+    filename = f'{current_date}.pdf'
+
+    return send_file(output, as_attachment=True, download_name=filename, mimetype='application/pdf')
 
 if __name__ == '__main__':
     init_db()

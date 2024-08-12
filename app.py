@@ -45,7 +45,7 @@ def init_db():
                           ocorrencias_ehs TEXT,
                           ausencias TEXT)''')
         db.commit()
-        
+
 @app.route('/')
 def index():
     return render_template('form.html')
@@ -120,7 +120,7 @@ def generate_pdf():
 
     # Dados do relatório
     text = [
-        f"Data: {row[1]}",
+        f"data: {row[1]}",
         f"Encarregados: {row[2]}",
         f"Profissionais Presentes: {row[3]}",
         f"Turma: {row[4]}",

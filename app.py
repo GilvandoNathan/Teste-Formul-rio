@@ -76,7 +76,7 @@ def submit():
                       (data, encarregados, profissionais_presentes, turma, turno, tema_ddsig, atividades_mecanica, atividades_eletrica, 
                       organizacao_limpeza, atividades_caldeiraria, atividades_transporte, atividades_mobilizacao, atividades_logistica, 
                       outras_atividades, pendencias, ocorrencias_ehs, ausencias) 
-                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
                    (data, encarregados, profissionais_presentes, turma, turno, tema_ddsig, atividades_mecanica, atividades_eletrica, 
                     organizacao_limpeza, atividades_caldeiraria, atividades_transporte, atividades_mobilizacao, atividades_logistica, 
                     outras_atividades, pendencias, ocorrencias_ehs, ausencias))

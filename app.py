@@ -1,3 +1,4 @@
+#Início do Código
 from flask import Flask, request, render_template, g, send_file, redirect, url_for
 import sqlite3
 import os

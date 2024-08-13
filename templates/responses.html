@@ -11,10 +11,14 @@
         <label for="encarregado">Filtrar por Encarregado:</label>
         <select name="encarregado" id="encarregado">
             <option value="Todos" {% if selected_encarregado == 'Todos' %}selected{% endif %}>Todos</option>
-            <!-- Adicione opções aqui com base nos encarregados disponíveis -->
+            <option value="EDIDELSON SANTOS" {% if selected_encarregado == 'EDIDELSON SANTOS' %}selected{% endif %}>EDIDELSON SANTOS</option>
+            <option value="WALISON TAVARES DOS SANTOS" {% if selected_encarregado == 'WALISON TAVARES DOS SANTOS' %}selected{% endif %}>WALISON TAVARES DOS SANTOS</option>
+            <option value="EVERTON MENDES SOARES" {% if selected_encarregado == 'EVERTON MENDES SOARES' %}selected{% endif %}>EVERTON MENDES SOARES</option>
+            <option value="ECTOR ALAN OLIVEIRA DOS SANTOS" {% if selected_encarregado == 'ECTOR ALAN OLIVEIRA DOS SANTOS' %}selected{% endif %}>ECTOR ALAN OLIVEIRA DOS SANTOS</option>
         </select>
         <button type="submit">Filtrar</button>
     </form>
+    
     <table border="1">
         <thead>
             <tr>

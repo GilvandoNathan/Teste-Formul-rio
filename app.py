@@ -1,4 +1,3 @@
-#Início do Código
 from flask import Flask, request, render_template, g, send_file, redirect, url_for
 import sqlite3
 import os
@@ -51,15 +50,20 @@ def init_db():
 
 @app.route('/')
 def index():
+    if request.method == 'POST':
+        data = request.form.get('data')
+        encarregado = request.form.get('encarregados')
+        # Adicione outros campos conforme necessário
+        return render_template('response.html', data=data, encarregado=encarregado)
     return render_template('form.html')
 
 @app.route('/submit', methods=['POST'])
 def submit():
-    data = request.form.get('data', '')  # Adicionando valor padrão
-    encarregados = request.form.get('encarregados', '')  # Adicionando valor padrão
-    profissionais_presentes = request.form.get('profissionais_presentes', '')
-    turma = request.form.get('turma', '')  # Adicionando valor padrão
-    turno = request.form.get('turno', '')  # Adicionando valor padrão
+    data = request.form.get('data', '')  
+    encarregados = request.form.get('encarregados', '')  
+    profissionais_presentes = ', '.join([key for key in request.form.keys() if key not in ['data', 'encarregados', 'turma', 'turno', 'tema_ddsig', 'atividades_mecanica', 'atividades_eletrica', 'organizacao_limpeza', 'atividades_caldeiraria', 'atividades_transporte', 'atividades_mobilizacao', 'atividades_logistica', 'outras_atividades', 'pendencias', 'ocorrencias_ehs', 'ausencias']])
+    turma = request.form.get('turma', '')  
+    turno = request.form.get('turno', '')  
     tema_ddsig = request.form.get('tema_ddsig', '')
     atividades_mecanica = request.form.get('atividades_mecanica', '')
     atividades_eletrica = request.form.get('atividades_eletrica', '')

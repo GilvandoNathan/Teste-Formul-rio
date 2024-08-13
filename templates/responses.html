@@ -1,31 +1,30 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Respostas</title>
 </head>
 <body>
-    <h1>Respostas dos Relatórios</h1>
-    <form action="/responses" method="get">
+    <h1>Respostas Submetidas</h1>
+
+    <form method="get" action="{{ url_for('responses') }}">
         <label for="encarregado">Filtrar por Encarregado:</label>
-        <select name="encarregado" id="encarregado">
+        <select name="encarregado" id="encarregado" onchange="this.form.submit()">
             <option value="Todos" {% if selected_encarregado == 'Todos' %}selected{% endif %}>Todos</option>
             <option value="EDIDELSON SANTOS" {% if selected_encarregado == 'EDIDELSON SANTOS' %}selected{% endif %}>EDIDELSON SANTOS</option>
             <option value="WALISON TAVARES DOS SANTOS" {% if selected_encarregado == 'WALISON TAVARES DOS SANTOS' %}selected{% endif %}>WALISON TAVARES DOS SANTOS</option>
             <option value="EVERTON MENDES SOARES" {% if selected_encarregado == 'EVERTON MENDES SOARES' %}selected{% endif %}>EVERTON MENDES SOARES</option>
             <option value="ECTOR ALAN OLIVEIRA DOS SANTOS" {% if selected_encarregado == 'ECTOR ALAN OLIVEIRA DOS SANTOS' %}selected{% endif %}>ECTOR ALAN OLIVEIRA DOS SANTOS</option>
         </select>
-        <button type="submit">Filtrar</button>
     </form>
-    
+
     <table border="1">
         <thead>
             <tr>
                 <th>ID</th>
-                <th>data</th>
-                <th>Encarregados</th>
-                <th>Profissionais Presentes</th>
+                <th>Data</th>
+                <th>Encarregado</th>
                 <th>Turma</th>
                 <th>Turno</th>
                 <th>Tema do DDSIG</th>
@@ -35,12 +34,13 @@
                 <th>Atividades de Caldeiraria</th>
                 <th>Atividades de Transporte</th>
                 <th>Atividades de Mobilização</th>
-                <th>Atividades Logísticas</th>
+                <th>Atividades de Logística</th>
                 <th>Outras Atividades</th>
                 <th>Pendências</th>
-                <th>Ocorrências EHS</th>
+                <th>Ocorrências de EHS</th>
                 <th>Ausências</th>
-                <th>Ações</th>
+                <th>Profissionais Presentes</th>
+                <th>Gerar PDF</th>
             </tr>
         </thead>
         <tbody>
@@ -49,7 +49,6 @@
                 <td>{{ row[0] }}</td>
                 <td>{{ row[1] }}</td>
                 <td>{{ row[2] }}</td>
-                <td>{{ row[3] }}</td>
                 <td>{{ row[4] }}</td>
                 <td>{{ row[5] }}</td>
                 <td>{{ row[6] }}</td>
@@ -64,11 +63,11 @@
                 <td>{{ row[15] }}</td>
                 <td>{{ row[16] }}</td>
                 <td>{{ row[17] }}</td>
-                <td><a href="/generate_pdf?id={{ row[0] }}">Gerar PDF</a></td>
+                <td>{{ row[3] }}</td>
+                <td><a href="{{ url_for('generate_pdf', id=row[0]) }}">Baixar PDF</a></td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-    <a href="/">Voltar</a>
 </body>
 </html>
